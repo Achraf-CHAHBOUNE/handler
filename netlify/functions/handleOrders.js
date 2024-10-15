@@ -35,8 +35,8 @@ exports.handler = async (event) => {
     // Insert data into the Supabase orders table
     const { data: insertData, error } = await supabase.from("orders").insert([
       {
-        order_id: orderId,
-        product_id: productId,
+        orderid: orderId,
+        productid: productId,
         full_name: fullName,
         country: country,
         whatsapp: whatsapp,
