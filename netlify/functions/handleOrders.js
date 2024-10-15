@@ -2,7 +2,7 @@ const { createClient } = require("@supabase/supabase-js");
 
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY; 
+const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 exports.handler = async (event) => {
@@ -22,8 +22,12 @@ exports.handler = async (event) => {
     const productId = data.data.product_id || "N/A";
     const email = data.data.customer_email || "N/A";
     const productName = data.data.product_title || "N/A";
-    const total =
-      data.data.product?.price_display || data.data.product?.price || "N/A";
+    const total = data.data.product
+      ? data.data.product.price_display
+        ? data.data.product.price_display
+        : data.data.product.price
+      : "N/A";
+
     const currency = data.data.currency || "N/A";
     const status = data.data.status || "N/A";
 
