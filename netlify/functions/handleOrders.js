@@ -65,18 +65,55 @@ exports.handler = async (event) => {
       },
     ]);
 
-    console.log("Email:", process.env.EMAIL_USER);
-    console.log("Password:", process.env.EMAIL_PASS);
-
     if (error) throw error;
 
-    // Send confirmation email
     const mailOptions = {
       from: '"IPTVV Support Team" <support@iptvv.shop>', // sender address
       to: email, // list of receivers
       subject: "Order Confirmation", // Subject line
-      text: `Hello ${fullName},\n\nThank you for your order!\n\nOrder ID: ${orderId}\nProduct: ${productName}\nTotal: ${total} ${currency}\nStatus: ${status}\n\nIf you have any questions, feel free to reach out to us.\n\nBest,\nSupport Team`, // plain text body
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0;">
+          <div style="background-color: #4CAF50; color: white; padding: 10px; text-align: center;">
+            <h1>Order Confirmation</h1>
+          </div>
+          <div style="padding: 20px;">
+            <p style="font-size: 16px;">Thank you for choosing IPTVV! We're excited to have you as a customer and are committed to providing you with the best service.</p>
+            <h2 style="color: #333;">Hello ${fullName},</h2>
+            <p>Thank you for your order! Below are the details:</p>
+            <h3 style="color: #333;">Order Details</h3>
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; border: 1px solid #ddd;">
+              <tr style="background-color: #f4f4f4;">
+                <th style="padding: 12px; border: 1px solid #ccc; text-align: left;">Field</th>
+                <th style="padding: 12px; border: 1px solid #ccc; text-align: left;">Details</th>
+              </tr>
+              <tr>
+                <td style="padding: 12px; border: 1px solid #ccc;">Order ID</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">${orderId}</td>
+              </tr>
+              <tr>
+                <td style="padding: 12px; border: 1px solid #ccc;">Product</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">${productName}</td>
+              </tr>
+              <tr>
+                <td style="padding: 12px; border: 1px solid #ccc;">Total</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">${total} ${currency}</td>
+              </tr>
+              <tr>
+                <td style="padding: 12px; border: 1px solid #ccc;">Status</td>
+                <td style="padding: 12px; border: 1px solid #ccc;">${status}</td>
+              </tr>
+            </table>
+            <p>If you have any questions or need assistance, feel free to reach out to us at any time.</p>
+            <p style="font-weight: bold;">You will receive a message here in your email and via WhatsApp number to activate your subscription.</p>
+          </div>
+          <div style="background-color: #f4f4f4; padding: 10px; text-align: center;">
+            <p style="margin: 0;">Best Regards,<br>The IPTVV Support Team</p>
+            <p style="margin: 0;">&copy; ${new Date().getFullYear()} IPTVV, All Rights Reserved.</p>
+          </div>
+        </div>
+      `, 
     };
+    
 
     await transporter.sendMail(mailOptions);
     console.log("Email sent successfully");
