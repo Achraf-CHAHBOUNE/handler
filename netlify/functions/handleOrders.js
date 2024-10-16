@@ -1,9 +1,21 @@
 const { createClient } = require("@supabase/supabase-js");
+const nodemailer = require("nodemailer");
 
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Create a Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  host: "smtp.zoho.com", // Zoho SMTP server
+  port: 587, // SMTP port
+  secure: false, // true for 465, false for other ports
+  auth: {
+    user: process.env.EMAIL_ADRESSE, // your email
+    pass: process.env.EMAIL_PASSWORD, // your email password or app-specific password
+  },
+});
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
@@ -54,6 +66,17 @@ exports.handler = async (event) => {
     ]);
 
     if (error) throw error;
+
+    // Send confirmation email
+    const mailOptions = {
+      from: '"Support Team" <support@iptvv.shop>', // sender address
+      to: email, // list of receivers
+      subject: "Order Confirmation", // Subject line
+      text: `Hello ${fullName},\n\nThank you for your order!\n\nOrder ID: ${orderId}\nProduct: ${productName}\nTotal: ${total} ${currency}\nStatus: ${status}\n\nIf you have any questions, feel free to reach out to us.\n\nBest,\nSupport Team`, // plain text body
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully");
 
     return {
       statusCode: 200,
