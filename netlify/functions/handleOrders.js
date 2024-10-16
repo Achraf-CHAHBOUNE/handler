@@ -12,8 +12,8 @@ const transporter = nodemailer.createTransport({
   port: 587, // SMTP port
   secure: false, // true for 465, false for other ports
   auth: {
-    user: "support@iptvv.shop", 
-    pass: "Achraf@123mary", 
+    user: process.env.EMAIL_USER, 
+    pass: process.env.EMAIL_PASS, 
   },
 });
 
@@ -65,11 +65,14 @@ exports.handler = async (event) => {
       },
     ]);
 
+    console.log("Email:", process.env.EMAIL_USER);
+    console.log("Password:", process.env.EMAIL_PASS);
+
     if (error) throw error;
 
     // Send confirmation email
     const mailOptions = {
-      from: '"Support Team" <support@iptvv.shop>', // sender address
+      from: '"IPTVV Support Team" <support@iptvv.shop>', // sender address
       to: email, // list of receivers
       subject: "Order Confirmation", // Subject line
       text: `Hello ${fullName},\n\nThank you for your order!\n\nOrder ID: ${orderId}\nProduct: ${productName}\nTotal: ${total} ${currency}\nStatus: ${status}\n\nIf you have any questions, feel free to reach out to us.\n\nBest,\nSupport Team`, // plain text body
