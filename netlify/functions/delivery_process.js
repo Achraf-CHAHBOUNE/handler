@@ -19,15 +19,15 @@ const transporter = nodemailer.createTransport({
 });
 
 const packageIds = {
-  "Golden 12 Month Subscription": "10",
-  "Golden 6 Month Subscription": "111",
-  "Golden 3 Month Subscription": "110",
-  "Golden 1 Month Subscription": "109",
-  "Platinum 12 Month Subscription": "152",
-  "Platinum 6 Month Subscription": "151",
-  "Platinum 3 Month Subscription": "150",
-  "Platinum 1 Month Subscription": "149",
-  "Trial of Service": "143",
+  "66e46483eebcc": "10",
+  "66e47140ad5c9": "111",
+  "66e471a757f8e": "110",
+  "66e471abeb826": "109",
+  "66f58bba87f0e": "152",
+  "66f58bf04c959": "151",
+  "66f58c0c554dc": "150",
+  "66f58c0f51ad4": "149",
+  "66fac7c03b374": "143",
 };
 
 const createM3ULine = async (packageId, note = "", country = "", templateId = "") => {
@@ -147,9 +147,11 @@ exports.handler = async (event) => {
     if (error) throw error;
 
     // Create M3U line
-    const packageId = packageIds[productName];
+    const packageId = packageIds[productId];
     const note = `${fullName} - ${email}`;
     const m3uResponse = await createM3ULine(packageId, note, country);
+
+    console.log("M3U Response:", m3uResponse);
 
     // Generate email HTML
     const html = generateEmailHtml(fullName, orderId, productName, total, currency, status, m3uResponse);
