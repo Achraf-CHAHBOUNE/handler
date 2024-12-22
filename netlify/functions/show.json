@@ -1,0 +1,98 @@
+[
+    {
+        "id": "143",
+        "name": "EAGLE_4k__24H_TEST",
+        "credits": "0",
+        "duration": "24",
+        "duration_in": "hours",
+        "connections": "1"
+    },
+    {
+        "id": "149",
+        "name": "EAGLE_4k__1M",
+        "credits": "2",
+        "duration": "30",
+        "duration_in": "days",
+        "connections": "1"
+    },
+    {
+        "id": "150",
+        "name": "EAGLE_4k__3M",
+        "credits": "6",
+        "duration": "90",
+        "duration_in": "days",
+        "connections": "1"
+    },
+    {
+        "id": "151",
+        "name": "EAGLE_4k__6M",
+        "credits": "12",
+        "duration": "180",
+        "duration_in": "days",
+        "connections": "1"
+    },
+    {
+        "id": "152",
+        "name": "EAGLE_4k__1 YEAR__24 Credits",
+        "credits": "24",
+        "duration": "365",
+        "duration_in": "days",
+        "connections": "1"
+    },
+    {
+        "id": "178",
+        "name": "EAGLE_4k__2 YEAR__40 Credits",
+        "credits": "40",
+        "duration": "730",
+        "duration_in": "days",
+        "connections": "1"
+    },
+    {
+        "id": "101",
+        "name": "EAGLE_24HOURS",
+        "credits": "0",
+        "duration": "24",
+        "duration_in": "hours",
+        "connections": "1"
+    },
+    {
+        "id": "109",
+        "name": "EAGLE_1 Month",
+        "credits": "2",
+        "duration": "1",
+        "duration_in": "months",
+        "connections": "1"
+    },
+    {
+        "id": "110",
+        "name": "EAGLE_3 Months",
+        "credits": "4",
+        "duration": "3",
+        "duration_in": "months",
+        "connections": "1"
+    },
+    {
+        "id": "111",
+        "name": "EAGLE_6 Months",
+        "credits": "6",
+        "duration": "6",
+        "duration_in": "months",
+        "connections": "1"
+    },
+    {
+        "id": "10",
+        "name": "EAGLE_1 Year",
+        "credits": "12",
+        "duration": "1",
+        "duration_in": "years",
+        "connections": "1"
+    },
+    {
+        "id": "112",
+        "name": "EAGLE_2 Year",
+        "credits": "20",
+        "duration": "2",
+        "duration_in": "years",
+        "connections": "1"
+    }
+]
