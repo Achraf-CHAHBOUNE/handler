@@ -53,8 +53,9 @@ const createM3ULine = async (packageId, note = "", country = "", templateId = ""
   }
 };
 
-const generateEmailHtml = (fullName, orderId, productName, total, currency, status, m3uResponse) => {
-  const m3uDetails = m3uResponse[0].status == true ? `
+const generateEmailHtml = (fullName, orderId, productName, total, currency, status, m3u) => {
+  const m3uResponse = m3u[0];
+  const m3uDetails = m3uResponse.status == true ? `
     <tr>
       <td style="padding: 12px; border: 1px solid #ccc;">M3U URL</td>
       <td style="padding: 12px; border: 1px solid #ccc;"><a href="${m3uResponse.url}">${m3uResponse.url}</a></td>
