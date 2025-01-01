@@ -28,7 +28,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // 🎯 Package ID for Trial
-const packageIds = { trial: '123' };
+const packageIds = { trial: '143' };
 
 // 🛡️ Helper Functions
 
