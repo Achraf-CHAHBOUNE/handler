@@ -45,7 +45,7 @@ const validateRequestData = (data) => {
  */
 const checkDuplicate = async (email) => {
   const { data, error } = await supabase
-    .from('Trial')
+    .from('trial')
     .select('*')
     .eq('email', email)
     .single();
