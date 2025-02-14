@@ -199,7 +199,7 @@ exports.handler = async (event) => {
     // Generate email HTML
     const html = generateEmailHtml(
       fullName,
-      orderId,
+      id,
       productName,
       price,
       currency,
