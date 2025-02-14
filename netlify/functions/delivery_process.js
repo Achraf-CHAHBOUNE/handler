@@ -18,19 +18,24 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const packageIds = {
-  "66e46483eebcc": "10",
-  "66e47140ad5c9": "111",
-  "66e471a757f8e": "110",
-  "66e471abeb826": "109",
-  "66f58bba87f0e": "152",
-  "66f58bf04c959": "151",
-  "66f58c0c554dc": "150",
-  "66f58c0f51ad4": "149",
-  "66fac7c03b374": "143",
+const packageNames = {
+  "Golden 12 month subscription": "10", // 12 months
+  "Golden 6 month subscription": "111", // 6 months
+  "Golden 3 month subscription": "110", // 3 months
+  "Golden 1 month subscription": "109", // 1 month
+  "Platinum 12 month subscription": "152", // 4k 12 months
+  "Platinum 6 month subscription": "151", // 4k 6 months
+  "Platinum 3 month subscription": "150", // 4k 3 months
+  "Platinum 1 month subscription": "149", // 4k 1 month
+  "Free trial": "143", // 4k 24 hours trial
 };
 
-const createM3ULine = async (packageId, note = "", country = "", templateId = "") => {
+const createM3ULine = async (
+  packageId,
+  note = "",
+  country = "",
+  templateId = ""
+) => {
   const apiKey = process.env.API_KEY;
   let apiUrl = `http://api1.vpn-cloud.icu/api/dev_api.php?action=user&type=create&package_id=${packageId}&api_key=${apiKey}`;
 
@@ -53,9 +58,19 @@ const createM3ULine = async (packageId, note = "", country = "", templateId = ""
   }
 };
 
-const generateEmailHtml = (fullName, orderId, productName, total, currency, status, m3u) => {
+const generateEmailHtml = (
+  fullName,
+  orderId,
+  productName,
+  total,
+  currency,
+  status,
+  m3u
+) => {
   const m3uResponse = m3u[0];
-  const m3uDetails = m3uResponse.status == true ? `
+  const m3uDetails =
+    m3uResponse.status == true
+      ? `
     <tr>
       <td style="padding: 12px; border: 1px solid #ccc;">M3U URL</td>
       <td style="padding: 12px; border: 1px solid #ccc;"><a href="${m3uResponse.url}">${m3uResponse.url}</a></td>
@@ -67,7 +82,8 @@ const generateEmailHtml = (fullName, orderId, productName, total, currency, stat
     <tr>
       <td style="padding: 12px; border: 1px solid #ccc;">Password</td>
       <td style="padding: 12px; border: 1px solid #ccc;">${m3uResponse.password}</td>
-    </tr>` : '';
+    </tr>`
+      : "";
 
   return `
     <div style="font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0;">
@@ -125,37 +141,71 @@ exports.handler = async (event) => {
     const data = JSON.parse(event.body);
     console.log("Incoming POST Data:", data);
 
-    // Extract necessary fields
-    const { id: orderId, product_id: productId, customer_email: email, product_title: productName, currency, status, custom_fields: customFields = {} } = data.data;
-    const { price_display: total = data.data.product.price } = data.data.product || {};
-    const { "Full name": fullName = "N/A", "Country": country = "N/A", "Whatsapp Number": whatsapp = "N/A" } = customFields;
+    // Extract necessary fields from Payhip payload
+    const { id, email, currency, price, items, type } = data;
+    const productName = items[0]?.product_name || "N/A";
+    const productId = items[0]?.product_id || "N/A";
+
+    // Extract custom questions from Payhip payload
+    const checkoutQuestions = data.checkout_questions;
+
+    // Find Full Name
+    const fullNameQuestion = checkoutQuestions.find(
+      (q) => q.question === "Full Name"
+    );
+    const fullName = fullNameQuestion ? fullNameQuestion.response : "N/A";
+
+    // Find Whatsapp number
+    const whatsappQuestion = checkoutQuestions.find(
+      (q) => q.question === "Whatsapp number"
+    );
+    const whatsapp = whatsappQuestion ? whatsappQuestion.response : "N/A";
+
+    const countryQuestion = checkoutQuestions.find(
+      (q) => q.question === "Country"
+    );
+
+    const country = countryQuestion ? countryQuestion.response : "N/A"; // Modify as needed
 
     // Insert data into the Supabase orders table
-    const { data: insertData, error } = await supabase.from("orders").insert([{
-      orderid: orderId,
-      productid: productId,
-      full_name: fullName,
-      country: country,
-      whatsapp: whatsapp,
-      customer_email: email,
-      product_title: productName,
-      total: total,
-      currency: currency,
-      status: status,
-      created_at: new Date(),
-    }]);
+    const { data: insertData, error } = await supabase.from("orders").insert([
+      {
+        orderid: id,
+        productid: productId,
+        full_name: fullName,
+        country: country,
+        whatsapp: whatsapp,
+        customer_email: email,
+        product_title: productName,
+        total: price,
+        currency: currency,
+        status: type === "paid" ? "Completed" : "Pending",
+        created_at: new Date(),
+      },
+    ]);
 
     if (error) throw error;
 
     // Create M3U line
-    const packageId = packageIds[productId];
-    const note = `${fullName} - ${email}`;
-    const m3uResponse = await createM3ULine(packageId, note, country);
+    const packageId = packageNames[productName];
+    const m3uResponse = await createM3ULine(
+      packageId,
+      `${fullName} - ${email}`,
+      country
+    );
 
     console.log("M3U Response:", m3uResponse);
 
     // Generate email HTML
-    const html = generateEmailHtml(fullName, orderId, productName, total, currency, status, m3uResponse);
+    const html = generateEmailHtml(
+      fullName,
+      orderId,
+      productName,
+      price,
+      currency,
+      type,
+      m3uResponse
+    );
 
     // Send email
     const mailOptions = {
